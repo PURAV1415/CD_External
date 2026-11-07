@@ -1,0 +1,2602 @@
+COMPILER DESIGN
+LAB MANUAL
+Study Edition: formatted programs, step-by-step explanations
+and 100 beginner-friendly viva questions
+Stack: C / LEX / YACC / Python 3    Purpose: External practical examination preparation
+How to use this manual
+Read the Aim and Algorithm first. If you can say the algorithm in your own words, the code
+becomes easy.
+Study the program with its line numbers. Green italic text is a comment. Then read ‘How
+the code works’ line by line.
+Type and run every program. Compare your output with the sample output shown.
+Revise with the VIVA TIP boxes and then go through the 100 questions in Module 6. Each
+answer is written in plain language, with an example wherever it helps.
+Quick reference: where each program is
+Module 1 Lexical analysis and automata · Module 2 Parsing and YACC · Module 3 SDT and
+intermediate code · Module 4 Symbol tables and memory · Module 5 Code generation and
+optimization · Module 6 Viva questions · Revision notes at the end.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 2
+Contents
+3
+MODULE 1: Lexical Analysis & Finite Automata
+ .  .  .  .  .  .  .  .  .  . 3
+1.1 LEX Program to Recognize Keywords, Identifiers, Numbers and Operators
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 6
+1.2 RE to NFA to DFA Conversion (Subset Construction)
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 9
+1.3 C Program to Simulate a DFA (Valid Identifiers)
+11
+MODULE 2: Parsing Techniques & YACC
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 11
+2.1 Recursive Descent Parser for Arithmetic Expressions
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 14
+2.2 YACC Parser for Arithmetic Expressions (+, -, *, /)
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 16
+2.3 LL(1) Table Generator (FIRST, FOLLOW and Parsing Table)
+21
+MODULE 3: Syntax-Directed Translation & Intermediate Code
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 21
+3.1 Infix to Postfix Conversion (Operator Stack)
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 23
+3.2 Three-Address Code (TAC) Generator
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 24
+3.3 Attribute-Based Type Checker for Assignments
+26
+MODULE 4: Symbol Tables, Type Checking & Memory Allocation
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 26
+4.1 Multi-Scope Symbol Table Manager
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 28
+4.2 Static Declaration Type Checker
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 29
+4.3 Stack-Based Memory Allocation Simulator (Activation Records)
+32
+MODULE 5: Code Generation, Optimization & Target Code
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 32
+5.1 Intermediate Code for Control Flow (if-else, while)
+ .  .  .  .  .  .  . 33
+5.2 Code Optimizer: Common Subexpression Elimination and Dead Code Removal
+ .  .  .  .  .  .  .  .  .  .  .  . 35
+5.3 Assembly Code Generator (8086) for Arithmetic and Procedure Calls
+37
+MODULE 6: Top 100 Viva-Voce Questions & Answers
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 37
+A. Compiler Basics & Phases
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 37
+B. LEX, YACC & Finite Automata
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 38
+C. Grammars & Parsing
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 40
+D. Syntax-Directed Translation & Intermediate Code
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 41
+E. Type Checking, Symbol Tables & Run-time Memory
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 41
+F. Optimization & Code Generation
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 43
+G. LEX / YACC Internals
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 43
+H. More Concepts (Parsing, Optimization, Errors, Tools)
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 48
+Revision Notes: what was changed from the original manual
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 3
+MODULE 1: Lexical Analysis & Finite Automata
+MODULE 1: Lexical Analysis & Finite Automata
+The lexical analyzer (scanner) reads the raw characters of the source program and groups them
+into tokens (keywords, identifiers, numbers, operators). Scanners are described with regular
+expressions and implemented as finite automata. This module shows a LEX scanner, the
+NFA-to-DFA conversion and a hand-written DFA.
+1.1 LEX Program to Recognize Keywords, Identifiers,
+Numbers and Operators
+AIM Classify the characters of a source file into tokens: keywords, identifiers, numbers and
+operators.
+Algorithm (step by step)
+1.Write the keyword rule before the identifier rule. When two rules match the same length, LEX
+uses the one written first, so int becomes a KEYWORD, not an IDENTIFIER.
+2.LEX always prefers the longest match, so interest is one IDENTIFIER, not the keyword int
+followed by erest.
+3.Count lines: every \n increases line_num.
+4.Ignore white space and // comments (no action, no output).
+5.Any other character is reported as UNKNOWN (a lexical error).
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 4
+Program
+scanner.l
+1
+%{
+2
+#include <stdio.h>
+3
+int line_num = 1;
+4
+%}
+5
+ 
+6
+%%
+7
+"int"|"float"|"char"|"if"|"else"|"while"|"return"
+8
+    { printf("Line %d: [KEYWORD   ] %s\n", line_num, yytext); }
+9
+ 
+10
+[a-zA-Z_][a-zA-Z0-9_]*
+11
+    { printf("Line %d: [IDENTIFIER] %s\n", line_num, yytext); }
+12
+ 
+13
+[0-9]+(\.[0-9]+)?
+14
+    { printf("Line %d: [NUMBER    ] %s\n", line_num, yytext); }
+15
+ 
+16
+"=="|"!="|">="|"<="|"+"|"-"|"*"|"/"|"="
+17
+    { printf("Line %d: [OPERATOR  ] %s\n", line_num, yytext); }
+18
+ 
+19
+"//".*      { /* skip single-line comment */ }
+20
+\n          { line_num++; }
+21
+[ \t]+      { /* skip whitespace */ }
+22
+.           { printf("Line %d: [UNKNOWN   ] %s\n", line_num, yytext); }
+23
+%%
+24
+ 
+25
+int main(int argc, char **argv)
+26
+{
+27
+    if (argc > 1) {
+28
+        FILE *f = fopen(argv[1], "r");
+29
+        if (!f) {
+30
+            perror("File opening failed");
+31
+            return 1;
+32
+        }
+33
+        yyin = f;
+34
+    }
+35
+    yylex();
+36
+    return 0;
+37
+}
+38
+ 
+39
+int yywrap()
+40
+{
+41
+    return 1;
+42
+}
+Compile & run
+terminal
+$ flex scanner.l
+$ gcc lex.yy.c -o scanner        # add -lfl only if the linker asks for it
+$ ./scanner source.c
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 5
+Sample input (source.c) and output
+output
+Line 1: [KEYWORD   ] int
+Line 1: [IDENTIFIER] x
+Line 1: [OPERATOR  ] =
+Line 1: [NUMBER    ] 10
+Line 1: [UNKNOWN   ] ;
+Line 3: [KEYWORD   ] float
+Line 3: [IDENTIFIER] y
+Line 3: [OPERATOR  ] =
+Line 3: [IDENTIFIER] x
+Line 3: [OPERATOR  ] +
+Line 3: [NUMBER    ] 2.5
+Line 3: [UNKNOWN   ] ;
+Line 4: [KEYWORD   ] if
+Line 4: [UNKNOWN   ] (
+Line 4: [IDENTIFIER] x
+Line 4: [OPERATOR  ] >=
+Line 4: [NUMBER    ] 5
+Line 4: [UNKNOWN   ] )
+Line 4: [KEYWORD   ] return
+Line 4: [IDENTIFIER] y
+Line 4: [UNKNOWN   ] ;
+source.c
+1
+int x = 10;
+2
+// a comment
+3
+float y = x + 2.5;
+4
+if (x >= 5) return y;
+How the code works
+Definitions section (between %{ %}): C code copied as it is; here it declares line_num.
+Rules section (between the two %%): each rule is pattern { action }. yytext holds the matched
+text.
+[0-9]+(\.[0-9]+)? matches an integer with an optional fractional part (10, 2.5).
+User code section: main opens the file given on the command line and stores it in yyin, then
+yylex() runs the scanner until end of file.
+yywrap() returns 1 to say ‘no more input files’.
+VIVA TIP Be ready to explain: rule order, longest match, yytext, yyin, yylex(), yywrap(). Input
+used for the sample output:
+Note: flex/bison were not available where this document was generated, so the LEX and YACC outputs in this
+manual were traced by hand from the rules; every C and Python output was produced by actually running the
+program.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 6
+1.2 RE to NFA to DFA Conversion (Subset Construction)
+AIM Convert an NFA into a DFA by subset construction and print the DFA state table. Example RE:
+(a|b)*a (strings over {a, b} ending in a).
+Algorithm (step by step)
+1.ε-closure(S): all states reachable from the states in S using only ε-moves (including S itself).
+2.Start state of the DFA = ε-closure({NFA start state}). Call it D0.
+3.For each unprocessed DFA state T and each input symbol a: compute U = ε-closure(move(T,
+a)).
+4.If U is new, give it the next name (D1, D2, ...) and add it to the work list. Record the transition T
+--a--> U.
+5.Repeat until the work list is empty. A DFA state is accepting if it contains an NFA accepting
+state.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 7
+Program
+subset.py
+1
+from collections import defaultdict
+2
+ 
+3
+EPS = 'ε'
+4
+ 
+5
+ 
+6
+class NFAState:
+7
+    def __init__(self, name):
+8
+        self.name = name
+9
+        self.transitions = defaultdict(list)   # symbol -> list of next states
+10
+        self.is_accepting = False
+11
+ 
+12
+ 
+13
+def epsilon_closure(states):
+14
+    """All states reachable from 'states' using only ε-moves."""
+15
+    closure = set(states)
+16
+    stack = list(states)
+17
+    while stack:
+18
+        curr = stack.pop()
+19
+        for nxt in curr.transitions.get(EPS, []):
+20
+            if nxt not in closure:
+21
+                closure.add(nxt)
+22
+                stack.append(nxt)
+23
+    return closure
+24
+ 
+25
+ 
+26
+def nfa_to_dfa(start_state, alphabet):
+27
+    initial = frozenset(epsilon_closure([start_state]))
+28
+    dfa_states = {initial: 'D0'}      # NFA-state-set -> DFA name
+29
+    dfa_trans = {}                    # DFA name -> {symbol: DFA name}
+30
+    unmarked = [initial]              # DFA states still to process
+31
+    counter = 1
+32
+ 
+33
+    while unmarked:
+34
+        T = unmarked.pop(0)
+35
+        t_name = dfa_states[T]
+36
+        dfa_trans[t_name] = {}
+37
+        for symbol in alphabet:
+38
+            move_res = set()                          # move(T, symbol)
+39
+            for s in T:
+40
+                move_res.update(s.transitions.get(symbol, []))
+41
+            U = frozenset(epsilon_closure(move_res))  # ε-closure(move)
+42
+            if not U:
+43
+                continue                              # no transition
+44
+            if U not in dfa_states:
+45
+                dfa_states[U] = f'D{counter}'
+46
+                counter += 1
+47
+                unmarked.append(U)
+48
+            dfa_trans[t_name][symbol] = dfa_states[U]
+49
+    return dfa_states, dfa_trans
+50
+ 
+51
+ 
+52
+# ---- Test: NFA for (a|b)*a ----
+53
+s0, s1, s2 = NFAState('s0'), NFAState('s1'), NFAState('s2')
+54
+s2.is_accepting = True
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 8
+subset.py
+55
+s0.transitions['a'] = [s0, s1]
+56
+s0.transitions['b'] = [s0]
+57
+s1.transitions[EPS] = [s2]
+58
+ 
+59
+states, trans = nfa_to_dfa(s0, ['a', 'b'])
+60
+ 
+61
+print("DFA States:")
+62
+for st, name in states.items():
+63
+    final = any(s.is_accepting for s in st)
+64
+    print(f"  {name} = {sorted(s.name for s in st)}", "(ACCEPTING)" if final else "")
+65
+print("DFA Transitions:")
+66
+for name, moves in trans.items():
+67
+    print(f"  {name}: {moves}")
+Compile & run
+terminal
+$ python3 subset.py
+Output
+output
+DFA States:
+  D0 = ['s0'] 
+  D1 = ['s0', 's1', 's2'] (ACCEPTING)
+DFA Transitions:
+  D0: {'a': 'D1', 'b': 'D0'}
+  D1: {'a': 'D1', 'b': 'D0'}
+How the code works
+NFAState stores a name, a dictionary of transitions (symbol to list of next states) and an
+accepting flag.
+epsilon_closure uses a stack: pop a state, add every state reachable by ε, and keep going
+until nothing new is found.
+frozenset is used because normal sets cannot be dictionary keys, and every DFA state is a set
+of NFA states.
+The test NFA: s0 loops on a and b; on a it may also go to s1; s1 reaches the accepting s2 by ε. So
+D1 = {s0, s1, s2} is accepting.
+Reading the result: D0 --a--> D1, D0 --b--> D0, D1 --a--> D1, D1 --b--> D0. The DFA accepts a
+string exactly when it ends in a.
+VIVA TIP Steps to say in the viva: ε-closure, move, new state set, repeat; accepting if the set
+contains an NFA final state.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 9
+1.3 C Program to Simulate a DFA (Valid Identifiers)
+AIM Simulate a DFA that accepts identifiers matching [a-zA-Z_][a-zA-Z0-9_]*, with full input
+validation.
+Algorithm (step by step)
+1.States: 0 = start, 1 = valid (accepting), -1 = dead (error).
+2.In state 0: a letter or underscore moves to state 1; anything else moves to the dead state.
+3.In state 1: a letter, digit or underscore stays in state 1; anything else moves to the dead state.
+4.Empty input is rejected. After the last character the string is accepted only if the DFA is in state
+1.
+Program
+dfa.c
+1
+#include <stdio.h>
+2
+#include <ctype.h>
+3
+#include <string.h>
+4
+ 
+5
+/* States: 0 = Start, 1 = Valid (accepting), -1 = Dead */
+6
+int simulate_dfa(const char *str)
+7
+{
+8
+    if (str == NULL || strlen(str) == 0)
+9
+        return 0;                       /* reject empty input */
+10
+ 
+11
+    int state = 0;
+12
+    for (int i = 0; str[i] != '\0'; i++) {
+13
+        char c = str[i];
+14
+        switch (state) {
+15
+            case 0:                     /* first character */
+16
+                if (isalpha(c) || c == '_') state = 1;
+17
+                else                        state = -1;
+18
+                break;
+19
+            case 1:                     /* remaining characters */
+20
+                if (isalnum(c) || c == '_') state = 1;
+21
+                else                        state = -1;
+22
+                break;
+23
+            default:                    /* dead state: stay rejected */
+24
+                return 0;
+25
+        }
+26
+    }
+27
+    return (state == 1);                /* accept only in state 1 */
+28
+}
+29
+ 
+30
+int main()
+31
+{
+32
+    char inputs[5][20] = {"var1", "_count", "99num", "a+b", ""};
+33
+    for (int i = 0; i < 5; i++) {
+34
+        printf("Input: '%s' -> %s\n", inputs[i],
+35
+               simulate_dfa(inputs[i]) ? "ACCEPTED" : "REJECTED");
+36
+    }
+37
+    return 0;
+38
+}
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 10
+Compile & run
+terminal
+$ gcc dfa.c -o dfa
+$ ./dfa
+Output
+output
+Input: 'var1' -> ACCEPTED
+Input: '_count' -> ACCEPTED
+Input: '99num' -> REJECTED
+Input: 'a+b' -> REJECTED
+Input: '' -> REJECTED
+How the code works
+The for loop reads one character at a time; the switch on state is the transition function.
+isalpha and isalnum come from ctype.h.
+99num fails because the first character is a digit; a+b fails at the '+'.
+VIVA TIP A DFA needs: set of states, alphabet, transition function, start state, accepting states.
+Here: {0, 1, dead}, characters, the switch, 0, {1}.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 11
+MODULE 2: Parsing Techniques & YACC
+MODULE 2: Parsing Techniques & YACC
+The parser checks that the token stream follows the grammar. Top-down parsers (recursive
+descent, LL(1)) build the tree from the start symbol; bottom-up parsers (YACC / LALR(1)) build it
+from the tokens upward.
+2.1 Recursive Descent Parser for Arithmetic Expressions
+AIM Write one C function per non-terminal to check whether an expression is valid. The grammar
+(left recursion already removed): E -> T E' ; E' -> + T E' | ε ; T -> F T' ; T' -> * F T'
+| ε ; F -> ( E ) | id.
+Algorithm (step by step)
+1.Make one function for each non-terminal: E, E', T, T', F. Each returns 1 (success) or 0 (failure).
+2.Use the global pos as the lookahead; match a terminal by testing the character and doing
+pos++.
+3.For a rule with ε (E', T'), if the lookahead is not + / *, simply return 1 without consuming input.
+4.The input is valid only if E() succeeds and the whole string was consumed (input[pos] ==
+'\0').
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 12
+Program
+rdp.c
+1
+#include <stdio.h>
+2
+#include <ctype.h>
+3
+#include <string.h>
+4
+ 
+5
+const char *input;      /* the string being parsed */
+6
+int pos = 0;            /* current position (lookahead) */
+7
+ 
+8
+int E(); int E_prime(); int T(); int T_prime(); int F();
+9
+ 
+10
+/* F -> ( E ) | id */
+11
+int F()
+12
+{
+13
+    if (input[pos] == '(') {
+14
+        pos++;
+15
+        if (E()) {
+16
+            if (input[pos] == ')') { pos++; return 1; }
+17
+        }
+18
+        return 0;
+19
+    }
+20
+    else if (isalnum(input[pos])) {
+21
+        while (isalnum(input[pos])) pos++;   /* consume the name */
+22
+        return 1;
+23
+    }
+24
+    return 0;
+25
+}
+26
+ 
+27
+/* T' -> * F T' | ε */
+28
+int T_prime()
+29
+{
+30
+    if (input[pos] == '*') {
+31
+        pos++;
+32
+        if (F()) return T_prime();
+33
+        return 0;
+34
+    }
+35
+    return 1;           /* ε */
+36
+}
+37
+ 
+38
+/* T -> F T' */
+39
+int T()
+40
+{
+41
+    if (F()) return T_prime();
+42
+    return 0;
+43
+}
+44
+ 
+45
+/* E' -> + T E' | ε */
+46
+int E_prime()
+47
+{
+48
+    if (input[pos] == '+') {
+49
+        pos++;
+50
+        if (T()) return E_prime();
+51
+        return 0;
+52
+    }
+53
+    return 1;           /* ε */
+54
+}
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 13
+rdp.c
+55
+ 
+56
+/* E -> T E' */
+57
+int E()
+58
+{
+59
+    if (T()) return E_prime();
+60
+    return 0;
+61
+}
+62
+ 
+63
+int main()
+64
+{
+65
+    char *tests[] = {"a+b*c", "(a+b)*c", "a+*b", "(a+b"};
+66
+    for (int i = 0; i < 4; i++) {
+67
+        input = tests[i];
+68
+        pos = 0;
+69
+        if (E() && input[pos] == '\0')
+70
+            printf("Expression '%s' is VALID\n", input);
+71
+        else
+72
+            printf("Expression '%s' is INVALID\n", input);
+73
+    }
+74
+    return 0;
+75
+}
+Compile & run
+terminal
+$ gcc rdp.c -o rdp
+$ ./rdp
+Output
+output
+Expression 'a+b*c' is VALID
+Expression '(a+b)*c' is VALID
+Expression 'a+*b' is INVALID
+Expression '(a+b' is INVALID
+How the code works
+The function bodies mirror the grammar rules: E() calls T() then E_prime(), exactly like E -> T
+E'.
+The first line declares all functions so they may call each other (they are mutually recursive).
+a+*b is invalid: after '+' the parser expects a T, but finds '*'. (a+b is invalid: the closing ')' is
+missing.
+Precedence comes from the grammar: * is handled deeper (in T) than + (in E), so * binds tighter.
+VIVA TIP Why was the grammar rewritten? Left recursion (E -> E + T) would make E() call itself
+forever.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 14
+2.2 YACC Parser for Arithmetic Expressions (+, -, *, /)
+AIM Build an LALR(1) parser that evaluates expressions, applies correct precedence and
+associativity, and detects division by zero.
+Algorithm (step by step)
+1.Declare the token NUMBER and the operator precedence: %left '+' '-' first (lower), then
+%left '*' '/' (higher).
+2.Write the grammar rule expr with one alternative per operator, and an action that computes $$
+from $1 and $3.
+3.Write a LEX scanner that returns NUMBER (with its value in yylval) and returns every other
+character as itself.
+4.Compile YACC and LEX output together; yyparse() drives the whole thing.
+Program
+parser.y
+1
+%{
+2
+#include <stdio.h>
+3
+#include <stdlib.h>
+4
+int  yylex(void);
+5
+void yyerror(const char *s);
+6
+%}
+7
+ 
+8
+%token NUMBER
+9
+%left '+' '-'          /* lower precedence, left-associative  */
+10
+%left '*' '/'          /* higher precedence, left-associative */
+11
+ 
+12
+%%
+13
+stmt : expr '\n'       { printf("Parsing Successful! Result = %d\n", $1); exit(0); }
+14
+     ;
+15
+ 
+16
+expr : expr '+' expr   { $$ = $1 + $3; }
+17
+     | expr '-' expr   { $$ = $1 - $3; }
+18
+     | expr '*' expr   { $$ = $1 * $3; }
+19
+     | expr '/' expr   { if ($3 == 0) {
+20
+                             yyerror("Execution Error: Division by Zero!");
+21
+                             exit(1);
+22
+                         }
+23
+                         $$ = $1 / $3; }
+24
+     | '(' expr ')'    { $$ = $2; }
+25
+     | NUMBER          { $$ = $1; }
+26
+     ;
+27
+%%
+28
+ 
+29
+void yyerror(const char *s)
+30
+{
+31
+    fprintf(stderr, "Syntax Error: %s\n", s);
+32
+}
+33
+ 
+34
+int main()
+35
+{
+36
+    printf("Enter Expression:\n");
+37
+    return yyparse();
+38
+}
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 15
+Program
+lexer.l
+1
+%{
+2
+#include "y.tab.h"
+3
+#include <stdlib.h>
+4
+extern int yylval;
+5
+%}
+6
+ 
+7
+%%
+8
+[0-9]+    { yylval = atoi(yytext); return NUMBER; }
+9
+[ \t]     ;                        /* ignore spaces */
+10
+\n        { return '\n'; }
+11
+.         { return yytext[0]; }    /* + - * / ( ) and anything else */
+12
+%%
+13
+ 
+14
+int yywrap() { return 1; }
+Compile & run
+terminal
+$ yacc -d parser.y          # makes y.tab.c and y.tab.h  (use 'bison -y -d' if no yacc)
+$ flex lexer.l               # makes lex.yy.c
+$ gcc y.tab.c lex.yy.c -o arith_parser
+$ ./arith_parser
+Sample runs
+output
+Enter Expression:
+2+3*4
+Parsing Successful! Result = 14
+ 
+(run 2)  Enter Expression:
+10/0
+Syntax Error: Execution Error: Division by Zero!
+ 
+(run 3)  Enter Expression:
+2+*3
+Syntax Error: syntax error
+How the code works
+$$ is the value of the left side; $1, $2, $3 are the values of the right-side symbols from left to
+right.
+The grammar is ambiguous (expr + expr in many ways); the %left lines resolve all shift-reduce
+conflicts. Later lines have higher precedence.
+yylex() in lexer.l feeds tokens to the parser; y.tab.h (made by yacc -d) gives the token
+numbers.
+yyerror() is called on any syntax error. The division-by-zero check is done in the semantic
+action.
+2+3*4 gives 14 and not 20 because * has higher precedence than +.
+VIVA TIP Know the three files: parser.y (grammar), lexer.l (tokens), y.tab.h (shared token codes),
+and the commands in the order yacc, flex, gcc.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 16
+2.3 LL(1) Table Generator (FIRST, FOLLOW and Parsing
+Table)
+AIM Compute the FIRST and FOLLOW sets programmatically and use them to build the LL(1)
+parsing table for the expression grammar.
+Algorithm (step by step)
+1.FIRST: for a terminal a, FIRST(a) = {a}. For A -> X1 X2 ..., add FIRST(X1) minus ε; if X1 can
+vanish also add FIRST(X2), and so on; if all can vanish add ε. Repeat until nothing changes.
+2.FOLLOW: put $ in FOLLOW(start symbol). For A -> α B β, add FIRST(β) minus ε to FOLLOW(B). If
+β can vanish (or is empty) add FOLLOW(A) to FOLLOW(B). Repeat until nothing changes.
+3.Table: for each production A -> α: for every terminal a in FIRST(α) set M[A, a] = that
+production. If ε is in FIRST(α), also set M[A, b] for every b in FOLLOW(A).
+4.If any cell gets two productions, the grammar is not LL(1).
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 17
+Program
+ll1.py
+1
+EPS, END = 'ε', '$'
+2
+ 
+3
+grammar = {
+4
+    'E':  [['T', "E'"]],
+5
+    "E'": [['+', 'T', "E'"], [EPS]],
+6
+    'T':  [['F', "T'"]],
+7
+    "T'": [['*', 'F', "T'"], [EPS]],
+8
+    'F':  [['(', 'E', ')'], ['id']],
+9
+}
+10
+start = 'E'
+11
+ 
+12
+ 
+13
+def first_of_seq(seq, first):
+14
+    """FIRST of a string of symbols such as ['T', "E'"]."""
+15
+    result = set()
+16
+    for X in seq:
+17
+        fx = first[X] if X in grammar else {X}   # terminal -> itself
+18
+        result |= fx - {EPS}
+19
+        if EPS not in fx:
+20
+            return result                        # X cannot vanish: stop
+21
+    result.add(EPS)                              # every symbol can vanish
+22
+    return result
+23
+ 
+24
+ 
+25
+# ---------- FIRST sets (repeat until nothing changes) ----------
+26
+first = {A: set() for A in grammar}
+27
+changed = True
+28
+while changed:
+29
+    changed = False
+30
+    for A, prods in grammar.items():
+31
+        for prod in prods:
+32
+            f = first_of_seq(prod, first)
+33
+            if not f <= first[A]:
+34
+                first[A] |= f
+35
+                changed = True
+36
+ 
+37
+# ---------- FOLLOW sets ----------
+38
+follow = {A: set() for A in grammar}
+39
+follow[start].add(END)
+40
+changed = True
+41
+while changed:
+42
+    changed = False
+43
+    for A, prods in grammar.items():
+44
+        for prod in prods:
+45
+            for i, B in enumerate(prod):
+46
+                if B not in grammar:
+47
+                    continue                      # only non-terminals
+48
+                f = first_of_seq(prod[i + 1:], first)
+49
+                new = f - {EPS}
+50
+                if EPS in f:                      # B can end the production
+51
+                    new |= follow[A]
+52
+                if not new <= follow[B]:
+53
+                    follow[B] |= new
+54
+                    changed = True
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 18
+ll1.py
+55
+ 
+56
+# ---------- LL(1) table ----------
+57
+table, conflict = {}, False
+58
+for A, prods in grammar.items():
+59
+    for prod in prods:
+60
+        f = first_of_seq(prod, first)
+61
+        targets = f - {EPS}
+62
+        if EPS in f:
+63
+            targets |= follow[A]
+64
+        for t in targets:
+65
+            if (A, t) in table:
+66
+                conflict = True
+67
+            table[(A, t)] = prod
+68
+ 
+69
+print("FIRST sets:")
+70
+for A in grammar:  print(f"  FIRST({A})  = {sorted(first[A])}")
+71
+print("FOLLOW sets:")
+72
+for A in grammar:  print(f"  FOLLOW({A}) = {sorted(follow[A])}")
+73
+print("\n=== LL(1) PARSING TABLE ===")
+74
+for (A, t), prod in sorted(table.items()):
+75
+    print(f"  M[{A}, {t}] = {A} -> {' '.join(prod)}")
+76
+print("\nGrammar is LL(1)" if not conflict else "\nConflict found: NOT LL(1)")
+Compile & run
+terminal
+$ python3 ll1.py
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 19
+Output
+output
+FIRST sets:
+  FIRST(E)  = ['(', 'id']
+  FIRST(E')  = ['+', 'ε']
+  FIRST(T)  = ['(', 'id']
+  FIRST(T')  = ['*', 'ε']
+  FIRST(F)  = ['(', 'id']
+FOLLOW sets:
+  FOLLOW(E) = ['$', ')']
+  FOLLOW(E') = ['$', ')']
+  FOLLOW(T) = ['$', ')', '+']
+  FOLLOW(T') = ['$', ')', '+']
+  FOLLOW(F) = ['$', ')', '*', '+']
+ 
+=== LL(1) PARSING TABLE ===
+  M[E, (] = E -> T E'
+  M[E, id] = E -> T E'
+  M[E', $] = E' -> ε
+  M[E', )] = E' -> ε
+  M[E', +] = E' -> + T E'
+  M[F, (] = F -> ( E )
+  M[F, id] = F -> id
+  M[T, (] = T -> F T'
+  M[T, id] = T -> F T'
+  M[T', $] = T' -> ε
+  M[T', )] = T' -> ε
+  M[T', *] = T' -> * F T'
+  M[T', +] = T' -> ε
+ 
+Grammar is LL(1)
+The LL(1) table as a grid
+id
+ (
+ )
+ +
+ *
+ $
+ E
+E -> T E'
+E -> T E'
+E'
+E' -> ε
+E' -> + T E'
+E' -> ε
+T
+T -> F T'
+T -> F T'
+T'
+T' -> ε
+T' -> ε
+T' -> * F T'
+T' -> ε
+F
+F -> id
+F -> ( E )
+How the code works
+The grammar is a dictionary: non-terminal to a list of productions, each production a list of
+symbols. ε is the string 'ε'.
+first_of_seq returns FIRST of a whole string such as T E'. It is used for both FIRST and FOLLOW.
+Both set computations use while changed loops: they stop when a full pass adds nothing new (a
+fixed point).
+The table is a dictionary keyed by (non-terminal, terminal); a conflict is detected when a key is
+filled twice.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 20
+VIVA TIP Remember the two table rules: terminals in FIRST(production), and FOLLOW(A) when the
+production can derive ε.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 21
+MODULE 3: Syntax-Directed Translation & Intermediate Code
+MODULE 3: Syntax-Directed Translation &
+Intermediate Code
+After parsing, the compiler translates the program into an intermediate representation.
+Syntax-directed translation attaches actions to grammar rules; here we convert infix to postfix,
+generate three-address code and check types.
+3.1 Infix to Postfix Conversion (Operator Stack)
+AIM Translate an infix expression to postfix, with the correct precedence and with ^ (exponent)
+being right-associative.
+Algorithm (step by step)
+1.Scan the expression from left to right.
+2.Operand: append directly to the output.
+3.'(': push on the stack. ')': pop to the output until '(' is found, then discard '('. If no '(' exists, the
+parentheses are mismatched.
+4.Operator: while the stack top is an operator with higher precedence (or equal precedence and
+the new operator is left-associative), pop it to the output. Then push the new operator.
+5.At the end pop everything to the output; a leftover '(' means mismatched parentheses.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 22
+Program
+postfix.py
+1
+def infix_to_postfix(expr):
+2
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+3
+    right_assoc = {'^'}                  # ^ groups right-to-left
+4
+    stack, postfix = [], []
+5
+ 
+6
+    for char in expr.replace(" ", ""):
+7
+        if char.isalnum():               # operand -> straight to output
+8
+            postfix.append(char)
+9
+        elif char == '(':
+10
+            stack.append(char)
+11
+        elif char == ')':
+12
+            while stack and stack[-1] != '(':
+13
+                postfix.append(stack.pop())
+14
+            if not stack:
+15
+                return "Error: Mismatched Parentheses"
+16
+            stack.pop()                  # discard '('
+17
+        else:                            # operator
+18
+            while (stack and stack[-1] != '(' and
+19
+                   (precedence.get(stack[-1], 0) > precedence.get(char, 0) or
+20
+                    (precedence.get(stack[-1], 0) == precedence.get(char, 0)
+21
+                     and char not in right_assoc))):
+22
+                postfix.append(stack.pop())
+23
+            stack.append(char)
+24
+ 
+25
+    while stack:
+26
+        if stack[-1] == '(':
+27
+            return "Error: Mismatched Parentheses"
+28
+        postfix.append(stack.pop())
+29
+    return "".join(postfix)
+30
+ 
+31
+ 
+32
+print("Infix: a+b*c^d^e   -> Postfix:", infix_to_postfix("a+b*c^d^e"))
+33
+print("Infix: (a+b)*c     -> Postfix:", infix_to_postfix("(a+b)*c"))
+34
+print("Infix: (a+b        -> Postfix:", infix_to_postfix("(a+b"))
+Compile & run
+terminal
+$ python3 postfix.py
+Output
+output
+Infix: a+b*c^d^e   -> Postfix: abcde^^*+
+Infix: (a+b)*c     -> Postfix: ab+c*
+Infix: (a+b        -> Postfix: Error: Mismatched Parentheses
+How the code works
+precedence gives each operator a rank: + - are 1, * / are 2, ^ is 3.
+The condition equal precedence and not right-associative makes + - * / left-to-right but ^
+right-to-left: c^d^e becomes cde^^, meaning c^(d^e).
+a+b*c^d^e gives abcde^^*+: ^ first, then *, then +.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 23
+VIVA TIP Postfix needs no parentheses and is evaluated with a stack: push operands, apply each
+operator to the top two.
+3.2 Three-Address Code (TAC) Generator
+AIM Generate three-address code from a postfix expression, with a guard against stack
+underflow.
+Algorithm (step by step)
+1.Scan the postfix string from left to right.
+2.Operand: push it on the stack.
+3.Operator: pop two items (first pop = right operand op2, second pop = left operand op1). If
+fewer than two items exist, report an error.
+4.Create a new temporary tN, emit tN = op1 operator op2 and push tN back on the stack.
+Program
+tac.py
+1
+def generate_tac(postfix_expr):
+2
+    stack = []
+3
+    temp_count = 1
+4
+    tac_instructions = []
+5
+ 
+6
+    for token in postfix_expr:
+7
+        if token.isalnum():                  # operand: push
+8
+            stack.append(token)
+9
+        else:                                # operator: pop two operands
+10
+            if len(stack) < 2:
+11
+                return ["Error: Invalid Postfix Syntax"]
+12
+            op2 = stack.pop()                # right operand (popped first)
+13
+            op1 = stack.pop()                # left operand
+14
+            temp = f"t{temp_count}"
+15
+            temp_count += 1
+16
+            tac_instructions.append(f"{temp} = {op1} {token} {op2}")
+17
+            stack.append(temp)               # result goes back on the stack
+18
+    return tac_instructions
+19
+ 
+20
+ 
+21
+for pf in ["abc*+", "ab+c*", "ab+*"]:
+22
+    print(f"Postfix {pf}:")
+23
+    for line in generate_tac(pf):
+24
+        print("   ", line)
+Compile & run
+terminal
+$ python3 tac.py
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 24
+Output
+output
+Postfix abc*+:
+    t1 = b * c
+    t2 = a + t1
+Postfix ab+c*:
+    t1 = a + b
+    t2 = t1 * c
+Postfix ab+*:
+    Error: Invalid Postfix Syntax
+How the code works
+Pop order matters for - and /: the first pop is the right operand. Swapping them would make a-b
+into b-a.
+For abc*+: b*c is computed first into t1, then a + t1 into t2.
+ab+* is invalid postfix: '*' finds only one operand, so the guard returns an error.
+VIVA TIP TAC = at most one operator and three addresses per instruction. It is stored as
+quadruples, triples or indirect triples.
+3.3 Attribute-Based Type Checker for Assignments
+AIM Use the type attributes of identifiers and constants to detect an invalid assignment such as a
+float expression assigned to an int variable.
+Algorithm (step by step)
+1.Keep a symbol table that maps each variable to its declared type.
+2.If the left-hand variable is not in the table, report an undeclared-variable error.
+3.Compute the type attribute of the right side: start with int; if any variable is float or any
+constant has a decimal point, the whole expression is float (coercion to the wider type).
+4.If the target is int and the expression is float, report a type error; otherwise the assignment is
+valid (int to float is allowed).
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 25
+Program
+typecheck.py
+1
+class AttributeTypeChecker:
+2
+    def __init__(self):
+3
+        # Symbol table: variable -> declared type
+4
+        self.sym_table = {'x': 'int', 'y': 'float', 'z': 'int'}
+5
+ 
+6
+    def check_assignment(self, lhs, rhs_tokens):
+7
+        if lhs not in self.sym_table:
+8
+            return f"Type Error: Undeclared destination variable '{lhs}'"
+9
+ 
+10
+        target_type = self.sym_table[lhs]
+11
+        current_type = 'int'                 # type attribute of the RHS
+12
+        for token in rhs_tokens:
+13
+            if token in self.sym_table:
+14
+                if self.sym_table[token] == 'float':
+15
+                    current_type = 'float'   # one float promotes the whole expr
+16
+            elif '.' in token and token.replace('.', '', 1).isdigit():
+17
+                current_type = 'float'       # literal such as 2.5
+18
+ 
+19
+        if target_type == 'int' and current_type == 'float':
+20
+            return f"Type Error: Cannot assign float expression to int variable '{lhs}'"
+21
+        return (f"Type Check SUCCESS: Expression type '{current_type}' "
+22
+                f"assigned to '{lhs}' ({target_type})")
+23
+ 
+24
+ 
+25
+checker = AttributeTypeChecker()
+26
+print(checker.check_assignment('x', ['y', '+', 'z']))   # float -> int
+27
+print(checker.check_assignment('y', ['x', '+', 'z']))   # int -> float
+28
+print(checker.check_assignment('w', ['x']))             # undeclared
+Compile & run
+terminal
+$ python3 typecheck.py
+Output
+output
+Type Error: Cannot assign float expression to int variable 'x'
+Type Check SUCCESS: Expression type 'int' assigned to 'y' (float)
+Type Error: Undeclared destination variable 'w'
+How the code works
+sym_table is the type environment: x:int, y:float, z:int.
+current_type is a synthesized attribute: it is built from the types of the operands (the
+children).
+Operators such as '+' are skipped because they are not in the table and contain no '.'
+x = y + z fails (float to int); y = x + z succeeds (int widened to float).
+VIVA TIP Mention: synthesized attribute, symbol table / type environment, coercion, static type
+checking.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 26
+MODULE 4: Symbol Tables, Type Checking & Memory Allocation
+MODULE 4: Symbol Tables, Type Checking &
+Memory Allocation
+The symbol table records every identifier with its type and scope. At run time each procedure call
+gets an activation record on the stack. These programs simulate both ideas.
+4.1 Multi-Scope Symbol Table Manager
+AIM Manage a stack of scopes: allow a name in an inner scope to hide (shadow) an outer one, but
+reject a duplicate declaration in the same scope.
+Algorithm (step by step)
+1.Keep a list of dictionaries; index 0 is the global scope and the last one is the current scope.
+2.enter_scope: push an empty dictionary. exit_scope: pop it (never remove the global scope).
+3.insert: fail if the name already exists in the current scope; otherwise add it.
+4.lookup: search from the innermost scope to the outermost and return the first match; return
+None if absent.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 27
+Program
+symtab.py
+1
+class SymbolTableManager:
+2
+    def __init__(self):
+3
+        self.scopes = [{}]                   # scope stack, index 0 = global
+4
+ 
+5
+    def enter_scope(self):
+6
+        self.scopes.append({})               # new block: push empty table
+7
+ 
+8
+    def exit_scope(self):
+9
+        if len(self.scopes) > 1:
+10
+            self.scopes.pop()                # leave block: discard its names
+11
+ 
+12
+    def insert(self, name, var_type):
+13
+        current_scope = self.scopes[-1]
+14
+        if name in current_scope:
+15
+            return False                     # duplicate in the SAME scope
+16
+        current_scope[name] = var_type
+17
+        return True
+18
+ 
+19
+    def lookup(self, name):
+20
+        for scope in reversed(self.scopes):  # innermost scope first
+21
+            if name in scope:
+22
+                return scope[name]
+23
+        return None                          # undeclared
+24
+ 
+25
+ 
+26
+st = SymbolTableManager()
+27
+st.insert("a", "int")
+28
+st.enter_scope()
+29
+st.insert("a", "float")                      # shadowing is allowed
+30
+print("Inner Scope 'a':", st.lookup("a"))
+31
+print("Duplicate in same scope allowed?", st.insert("a", "char"))
+32
+st.exit_scope()
+33
+print("Global Scope 'a':", st.lookup("a"))
+Compile & run
+terminal
+$ python3 symtab.py
+Output
+output
+Inner Scope 'a': float
+Duplicate in same scope allowed? False
+Global Scope 'a': int
+How the code works
+The inner a (float) hides the global a (int) while the inner scope is active.
+Inserting a again in the same inner scope returns False: a redeclaration error.
+After exit_scope() the inner a is gone, so lookup finds the global int again.
+VIVA TIP Nested scopes = stack of hash tables; lookup goes inner to outer (lexical scoping).
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 28
+4.2 Static Declaration Type Checker
+AIM Validate variable and array declarations: known type, valid name and positive integer array
+size, and no redeclaration.
+Algorithm (step by step)
+1.Remove the ';' and split the declaration into words: type and name (with optional [size]).
+2.Reject unknown types (only int, float, char are allowed).
+3.For an array name[size], the size must be a positive integer.
+4.If the name is already in the symbol set, report redeclaration; otherwise insert it and report
+success.
+Program
+decl.py
+1
+def check_declaration(decl, sym_set):
+2
+    parts = decl.strip(";").split()
+3
+    if len(parts) < 2:
+4
+        return "Syntax Error"
+5
+ 
+6
+    dtype, var_part = parts[0], parts[1]
+7
+    if dtype not in ['int', 'float', 'char']:
+8
+        return f"Unknown Type '{dtype}'"
+9
+ 
+10
+    if '[' in var_part:                      # array declaration
+11
+        name, dim = var_part.split('[')
+12
+        dim = dim.replace(']', '')
+13
+        if not dim.isdigit() or int(dim) <= 0:
+14
+            return f"Array Error: Dimension [{dim}] must be positive integer"
+15
+    else:
+16
+        name = var_part
+17
+ 
+18
+    if name in sym_set:
+19
+        return f"Redeclaration Error: '{name}' already declared"
+20
+    sym_set.add(name)
+21
+    return f"Valid Declaration: '{name}' registered as {dtype}"
+22
+ 
+23
+ 
+24
+symbols = set()
+25
+print(check_declaration("int arr[10];", symbols))
+26
+print(check_declaration("float arr[-2];", symbols))
+27
+print(check_declaration("int arr;", symbols))
+28
+print(check_declaration("double d;", symbols))
+Compile & run
+terminal
+$ python3 decl.py
+Output
+output
+Valid Declaration: 'arr' registered as int
+Array Error: Dimension [-2] must be positive integer
+Redeclaration Error: 'arr' already declared
+Unknown Type 'double'
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 29
+How the code works
+dim.isdigit() is false for '-2' (the minus sign is not a digit), so negative sizes are caught;
+int(dim) <= 0 catches 0.
+sym_set is shared between calls so the second declaration of arr is detected.
+These are semantic checks done at compile time.
+VIVA TIP Static = checked at compile time. Typical errors here: unknown type, bad array size,
+redeclaration.
+4.3 Stack-Based Memory Allocation Simulator (Activation
+Records)
+AIM Simulate pushing and popping activation records for procedure calls, with overflow and
+underflow checks.
+Algorithm (step by step)
+1.Define a Frame with the function name, return address and number of locals.
+2.push_frame (call): if the stack is full print overflow; else increase top and fill the frame.
+3.pop_frame (return): if the stack is empty print underflow; else print the return address and
+decrease top.
+4.Calls follow last-in, first-out order: the callee returns before the caller.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 30
+Program
+stack.c
+1
+#include <stdio.h>
+2
+#include <string.h>
+3
+ 
+4
+typedef struct {
+5
+    char func_name[20];
+6
+    int  return_address;
+7
+    int  local_var_count;
+8
+} Frame;                                    /* one activation record */
+9
+ 
+10
+Frame call_stack[10];
+11
+int top = -1;                               /* -1 means empty stack */
+12
+ 
+13
+void push_frame(const char *name, int ret_addr, int locals)
+14
+{
+15
+    if (top >= 9) { printf("Stack Overflow!\n"); return; }
+16
+    top++;
+17
+    strcpy(call_stack[top].func_name, name);
+18
+    call_stack[top].return_address  = ret_addr;
+19
+    call_stack[top].local_var_count = locals;
+20
+    printf("[PUSH] Frame '%s' | RetAddr: %d | Locals: %d\n",
+21
+           name, ret_addr, locals);
+22
+}
+23
+ 
+24
+void pop_frame()
+25
+{
+26
+    if (top < 0) { printf("Stack Underflow!\n"); return; }
+27
+    printf("[POP ] Exiting Frame '%s' -> Returning to Addr: %d\n",
+28
+           call_stack[top].func_name, call_stack[top].return_address);
+29
+    top--;
+30
+}
+31
+ 
+32
+int main()
+33
+{
+34
+    push_frame("main", 1000, 2);
+35
+    push_frame("compute", 1045, 4);
+36
+    pop_frame();
+37
+    pop_frame();
+38
+    pop_frame();                            /* demonstrates underflow check */
+39
+    return 0;
+40
+}
+Compile & run
+terminal
+$ gcc stack.c -o stack
+$ ./stack
+Output
+output
+[PUSH] Frame 'main' | RetAddr: 1000 | Locals: 2
+[PUSH] Frame 'compute' | RetAddr: 1045 | Locals: 4
+[POP ] Exiting Frame 'compute' -> Returning to Addr: 1045
+[POP ] Exiting Frame 'main' -> Returning to Addr: 1000
+Stack Underflow!
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 31
+How the code works
+top = -1 means the stack is empty; the array has room for 10 frames (indices 0 to 9).
+main is called first and returns last; compute is pushed later and popped first.
+The third pop shows the underflow guard working.
+VIVA TIP An activation record holds parameters, locals, return address, saved registers and links
+(dynamic and static).
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 32
+MODULE 5: Code Generation, Optimization & Target Code
+MODULE 5: Code Generation, Optimization &
+Target Code
+The back end turns intermediate code into efficient target code. These programs generate jump
+code for control flow, optimize three-address code and produce 8086 assembly.
+5.1 Intermediate Code for Control Flow (if-else, while)
+AIM Generate three-address code with labels and jumps for if-else and while statements.
+Algorithm (step by step)
+1.if (C) S1 else S2: test C; if false jump to the else label; run S1; jump to the end label; else
+label: run S2; end label.
+2.while (C) S: begin label; test C and jump to the end label if false; run S; jump back to the begin
+label; end label.
+3.Generate a fresh unique label (L1, L2, ...) each time one is needed.
+Program
+cftac.py
+1
+class ControlFlowTAC:
+2
+    def __init__(self):
+3
+        self.label_id = 0
+4
+ 
+5
+    def new_label(self):
+6
+        self.label_id += 1
+7
+        return f"L{self.label_id}"
+8
+ 
+9
+    def gen_if_else(self, cond, then_tac, else_tac):
+10
+        l_else, l_end = self.new_label(), self.new_label()
+11
+        code = [f"ifFalse ({cond}) goto {l_else}"]   # skip THEN if cond false
+12
+        code.extend([f"    {line}" for line in then_tac])
+13
+        code.append(f"goto {l_end}")                 # jump over ELSE
+14
+        code.append(f"{l_else}:")
+15
+        code.extend([f"    {line}" for line in else_tac])
+16
+        code.append(f"{l_end}:")
+17
+        return code
+18
+ 
+19
+    def gen_while(self, cond, body_tac):
+20
+        l_begin, l_end = self.new_label(), self.new_label()
+21
+        code = [f"{l_begin}:", f"ifFalse ({cond}) goto {l_end}"]
+22
+        code.extend([f"    {line}" for line in body_tac])
+23
+        code.append(f"goto {l_begin}")               # loop back
+24
+        code.append(f"{l_end}:")
+25
+        return code
+26
+ 
+27
+ 
+28
+cf = ControlFlowTAC()
+29
+print("if (a < b) { x = 1; y = 2; } else { x = 0; }")
+30
+print("\n".join(cf.gen_if_else("a < b", ["x = 1", "y = 2"], ["x = 0"])))
+31
+print()
+32
+print("while (i < 10) { i = i + 1; }")
+33
+print("\n".join(cf.gen_while("i < 10", ["i = i + 1"])))
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 33
+Compile & run
+terminal
+$ python3 cftac.py
+Output
+output
+if (a < b) { x = 1; y = 2; } else { x = 0; }
+ifFalse (a < b) goto L1
+    x = 1
+    y = 2
+goto L2
+L1:
+    x = 0
+L2:
+ 
+while (i < 10) { i = i + 1; }
+L3:
+ifFalse (i < 10) goto L4
+    i = i + 1
+goto L3
+L4:
+How the code works
+new_label() increases a counter so that labels never repeat.
+ifFalse (cond) goto L1 jumps over the THEN part when the condition is false; goto L2 keeps
+the THEN branch from running the ELSE part.
+The while loop jumps back to its start label at the end of the body, which creates the repetition.
+VIVA TIP Mention backpatching: when labels are not yet known, jump targets are filled in later
+(Q62).
+5.2 Code Optimizer: Common Subexpression Elimination and
+Dead Code Removal
+AIM Remove repeated computations (CSE) and instructions whose results are never used (dead
+code) from a block of three-address code.
+Algorithm (step by step)
+1.CSE (forward pass): remember each right-hand side already computed and the variable that
+holds it. If the same expression appears again, do not emit it; remember that the new variable is
+replaced by the old one.
+2.Replace later uses of an eliminated variable by the variable that holds the value.
+3.Dead code removal (backward pass): start with the set of variables needed after the block
+(live_out). Walk the code from the last instruction to the first: keep an instruction only if its result
+is live, and then make its operands live.
+4.Everything else is dead and is dropped.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 34
+Program
+opt.py
+1
+def optimize_code(tac_list, live_out):
+2
+    # ---- Pass 1: Common Subexpression Elimination (forward) ----
+3
+    seen_expr = {}       # expression text -> variable already holding it
+4
+    subst = {}           # eliminated variable -> variable to use instead
+5
+    cse_tac = []
+6
+    for line in tac_list:
+7
+        lhs, rhs = [x.strip() for x in line.split('=')]
+8
+        rhs = " ".join(subst.get(tok, tok) for tok in rhs.split())
+9
+        if rhs in seen_expr:
+10
+            subst[lhs] = seen_expr[rhs]       # reuse the earlier result
+11
+        else:
+12
+            seen_expr[rhs] = lhs
+13
+            cse_tac.append(f"{lhs} = {rhs}")
+14
+ 
+15
+    # ---- Pass 2: Dead Code Removal (backward) ----
+16
+    live = set(live_out)             # variables needed after this block
+17
+    final_tac = []
+18
+    for line in reversed(cse_tac):
+19
+        lhs, rhs = [x.strip() for x in line.split('=')]
+20
+        if lhs in live:                       # result is used -> keep
+21
+            final_tac.append(line)
+22
+            live.update(t for t in rhs.split() if t.isalnum())
+23
+        # else: nobody reads lhs -> dead, drop it
+24
+    final_tac.reverse()
+25
+    return cse_tac, final_tac
+26
+ 
+27
+ 
+28
+tac = ["t1 = a + b", "t2 = c * d", "t3 = a + b",
+29
+       "t4 = t1 + t3", "unused = x + 1", "t5 = t2 + t2"]
+30
+print("Original TAC :", tac)
+31
+after_cse, final = optimize_code(tac, live_out={"t4"})
+32
+print("After CSE    :", after_cse)
+33
+print("After DCE    :", final)
+Compile & run
+terminal
+$ python3 opt.py
+Output
+output
+Original TAC : ['t1 = a + b', 't2 = c * d', 't3 = a + b', 't4 = t1 + t3', 'unused = x + 1', 't5 = t2 + t2'
+]
+After CSE    : ['t1 = a + b', 't2 = c * d', 't4 = t1 + t1', 'unused = x + 1', 't5 = t2 + t2']
+After DCE    : ['t1 = a + b', 't4 = t1 + t1']
+How the code works
+t3 = a + b repeats t1 = a + b, so it is removed and t3 is replaced by t1 in t4 = t1 + t3,
+giving t4 = t1 + t1.
+The backward pass keeps only what t4 needs: t4 and t1. The lines for t2, unused and t5 are
+dead.
+The backward direction handles chains: removing t5 also makes t2 unnecessary.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 35
+VIVA TIP CSE = reuse an earlier result. Dead code = a value that is computed but never used.
+Both are machine-independent optimizations.
+5.3 Assembly Code Generator (8086) for Arithmetic and
+Procedure Calls
+AIM Map three-address instructions to 8086 assembly and generate the code for a procedure call.
+Algorithm (step by step)
+1.For t = x op y: load x into AX, apply the operation with y, store AX into t.
+2.Use ADD and SUB directly; for multiplication move y to BX and use MUL BX (result in AX).
+3.For a call: push the arguments right to left, CALL the procedure, then clean the stack with
+ADD SP, 2 x number of arguments (each 16-bit argument is 2 bytes).
+Program
+asm.py
+1
+class AssemblyGenerator:
+2
+    def __init__(self):
+3
+        self.code = [".model small", ".code"]
+4
+ 
+5
+    def generate_arithmetic(self, tac_lines):
+6
+        for line in tac_lines:
+7
+            lhs, rhs = [x.strip() for x in line.split('=')]
+8
+            parts = rhs.split()
+9
+            if len(parts) == 3:
+10
+                op1, op, op2 = parts
+11
+                self.code.append(f"MOV AX, {op1}")        # load first operand
+12
+                if op == '+':
+13
+                    self.code.append(f"ADD AX, {op2}")
+14
+                elif op == '-':
+15
+                    self.code.append(f"SUB AX, {op2}")
+16
+                elif op == '*':
+17
+                    self.code.append(f"MOV BX, {op2}")
+18
+                    self.code.append("MUL BX")            # AX = AX * BX
+19
+                self.code.append(f"MOV {lhs}, AX")        # store result
+20
+        return self.code
+21
+ 
+22
+    def generate_proc_call(self, proc_name, args):
+23
+        for arg in reversed(args):                        # push right-to-left
+24
+            self.code.append(f"PUSH {arg}")
+25
+        self.code.append(f"CALL {proc_name}")
+26
+        self.code.append(f"ADD SP, {len(args) * 2}")      # caller cleans stack
+27
+        return self.code
+28
+ 
+29
+ 
+30
+gen = AssemblyGenerator()
+31
+gen.generate_arithmetic(["t1 = a + b", "t2 = t1 * c"])
+32
+gen.generate_proc_call("swap", ["x", "y"])
+33
+print("\n".join(gen.code))
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 36
+Compile & run
+terminal
+$ python3 asm.py
+Output (8086 assembly)
+output
+.model small
+.code
+MOV AX, a
+ADD AX, b
+MOV t1, AX
+MOV AX, t1
+MOV BX, c
+MUL BX
+MOV t2, AX
+PUSH y
+PUSH x
+CALL swap
+ADD SP, 4
+How the code works
+Each TAC instruction becomes a load, an operation and a store; AX is the accumulator register.
+Arguments are pushed in reverse so the first argument is nearest the top of the stack when the
+procedure starts.
+The caller removes the arguments after the call, which is why SP is increased by 4 for two 2-byte
+arguments.
+VIVA TIP Know the registers: AX (accumulator), BX (base), SP (stack pointer); and the pair PUSH /
+CALL, with the caller cleaning the stack.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 37
+MODULE 6: Top 100 Viva-Voce Questions & Answers
+MODULE 6: Top 100 Viva-Voce Questions &
+Answers
+Every answer is written in plain language. Short examples (yellow boxes) are given wherever they
+make the idea easier to remember. Questions are grouped by topic but keep their original
+numbers.
+A. Compiler Basics & Phases
+Q1.  What is a compiler?
+A compiler is a program that reads a whole program written in a high-level language (like C)
+and translates it into a low-level form such as machine code. It does this before the program
+runs, and it reports errors it finds along the way. It usually works in several phases, not one
+single step.
+Example: gcc hello.c -o hello turns hello.c into the executable hello.
+Q2.  Differentiate between a compiler and an interpreter.
+A compiler translates the entire program first, produces a separate executable, and then the
+executable runs fast. An interpreter translates and runs the program line by line, so there is
+no separate executable and execution is usually slower. Compilers show all errors at once;
+interpreters stop at the first error they reach.
+Example: C uses a compiler; classic Python and JavaScript are interpreted (many modern ones mix
+both).
+Q3.  List the main phases of a compiler.
+1) Lexical analysis - splits source text into tokens. 2) Syntax analysis - checks grammar
+and builds a parse tree. 3) Semantic analysis - checks meaning (types, declarations). 4)
+Intermediate code generation - produces machine-independent code such as
+three-address code. 5) Code optimization - makes the code faster/smaller. 6) Target code
+generation - produces assembly/machine code. The symbol table and error handler are used
+by all phases.
+Q4.  What is a lexeme, token and pattern?
+A lexeme is the actual text in the source, e.g. count. A token is the category it belongs to,
+e.g. IDENTIFIER. A pattern is the rule (usually a regular expression) that describes which
+lexemes belong to a token.
+Example: Lexeme count -> token IDENTIFIER -> pattern [a-zA-Z_][a-zA-Z0-9_]*.
+Q5.  What is the output of the lexical analyzer?
+A stream of tokens (each usually with an attribute such as the lexeme or a symbol-table
+pointer). The parser asks for these tokens one at a time. Whitespace and comments are
+removed by the lexer and never reach the parser.
+Example: x = 5 + y; becomes ID(x) ASSIGN NUM(5) PLUS ID(y) SEMI.
+B. LEX, YACC & Finite Automata
+Q6.  What is FLEX?
+Flex (Fast Lexical Analyzer Generator) is a tool that reads a specification file of regular
+expressions with C actions (a .l file) and generates a C scanner (lex.yy.c). That scanner
+contains the function yylex() which returns tokens. It is the modern, faster replacement for
+the original Lex.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 38
+Q7.  What is YACC?
+YACC (Yet Another Compiler-Compiler) is a parser generator. You give it grammar rules with C
+actions (a .y file) and it generates a bottom-up LALR(1) parser in C (y.tab.c) with the
+function yyparse(). GNU Bison is its free equivalent.
+Q8.  What is a regular expression?
+A regular expression (RE) is a compact notation to describe a set of strings. It is built from
+characters and three operators: union |, concatenation, and Kleene star *. Scanners use REs
+to describe tokens.
+Example: [0-9]+ describes all unsigned integers; (a|b)*a describes strings over {a,b} ending in a.
+Q9.  Define NFA and DFA.
+A DFA (Deterministic Finite Automaton) has exactly one transition for each state and input
+symbol and no ε-moves. An NFA (Nondeterministic) may have several transitions on the same
+symbol and may have ε-moves (moves without reading input). Both recognize exactly the
+same class of languages: regular languages. DFAs are faster to run; NFAs are easier to build
+from REs.
+Q10.  What is Thompson's construction?
+An algorithm that converts a regular expression into an NFA with ε-transitions. It builds a small
+NFA for each basic symbol and then combines them using fixed patterns for union,
+concatenation and star. Every NFA it builds has one start state and one accepting state.
+Q11.  What is subset construction?
+The algorithm that converts an NFA into an equivalent DFA. Each DFA state is a set of NFA
+states. Start with the ε-closure of the NFA start state; for each input symbol compute move
+then ε-closure to get the next set; repeat until no new sets appear. A DFA state is accepting if
+its set contains an NFA accepting state. (See program 1.2.)
+Q12.  What is DFA minimization?
+Reducing a DFA to the smallest equivalent DFA by merging states that behave identically
+(indistinguishable states). First separate accepting from non-accepting states, then keep
+splitting groups whose members go to different groups on some input. The result recognizes
+the same language with fewer states, so the scanner is smaller.
+C. Grammars & Parsing
+Q13.  What is a context-free grammar (CFG)?
+A CFG is a 4-tuple (V, T, P, S): V = non-terminals (syntactic variables), T = terminals
+(tokens), P = production rules of the form A -> α, S = start symbol. Programming-language
+syntax is described using CFGs.
+Example: E -> E + E | id has V={E}, T={+, id}, S=E.
+Q14.  What is an ambiguous grammar?
+A grammar is ambiguous if at least one string has more than one parse tree (or leftmost
+derivation). Ambiguity is a problem because the meaning of the program becomes unclear. It
+is removed by rewriting the grammar or by giving precedence/associativity rules (as YACC
+does with %left).
+Example: E -> E + E | E * E | id gives two trees for id + id * id.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 39
+Q15.  What is left recursion?
+A grammar is left-recursive when a non-terminal can derive a string that starts with itself, e.g.
+A -> Aα | β. Direct left recursion appears in the rule itself; indirect left recursion appears
+through a chain of rules.
+Example: E -> E + T | T is left-recursive.
+Q16.  Why must left recursion be eliminated for LL(1) parsing?
+A top-down parser expands the leftmost non-terminal. With A -> Aα it expands A into A again
+without consuming any input, so it loops forever. Rewrite A -> Aα | β as A -> βA' and A' ->
+αA' | ε.
+Example: E -> E+T | T becomes E -> T E', E' -> + T E' | ε (used in program 2.1).
+Q17.  What is left factoring?
+When two productions of a non-terminal start with the same prefix, the parser cannot choose
+with one lookahead token. Left factoring pulls the common prefix out: A -> αβ1 | αβ2
+becomes A -> αA', A' -> β1 | β2. The decision is postponed until the parser has read more
+input.
+Example: S -> if E then S | if E then S else S becomes S -> if E then S S', S' -> else
+S | ε.
+Q18.  What is the FIRST() set?
+FIRST(α) is the set of terminals that can appear first in some string derived from α. If α can
+derive the empty string, ε is also in FIRST(α). It tells a predictive parser which production to
+pick for the next input token.
+Example: For F -> ( E ) | id: FIRST(F) = { (, id }.
+Q19.  What is the FOLLOW() set?
+FOLLOW(A) is the set of terminals that can appear immediately after non-terminal A in
+some sentential form. The end marker $ is in FOLLOW of the start symbol. FOLLOW is used
+when a production can derive ε: the parser then uses FOLLOW(A) to decide when to choose
+that production.
+Example: In our expression grammar FOLLOW(E) = { $, ) }.
+Q20.  What is an LL(1) parser?
+A top-down predictive parser. First L: reads input Left to right. Second L: builds a Leftmost
+derivation. The (1): uses one lookahead token to choose a production from the LL(1) table
+M[non-terminal, terminal]. It needs a grammar with no left recursion, no common prefixes and
+no ambiguity.
+Q21.  What is an LR parser?
+A bottom-up parser. L: reads input Left to right. R: builds a Rightmost derivation in reverse. It
+repeatedly shifts input tokens onto a stack and reduces a handle on top of the stack to a
+non-terminal, until only the start symbol remains. LR parsers handle a larger set of grammars
+than LL parsers.
+Q22.  Compare SLR(1), LALR(1) and CLR(1).
+SLR(1): simplest; builds LR(0) item sets and uses FOLLOW sets to place reduce actions, so it
+may report false conflicts. CLR(1) (canonical LR): items carry exact lookaheads; most
+powerful but has the largest tables. LALR(1): merges CLR states that have the same core
+(same items, different lookaheads); table size equals SLR but power is close to CLR. YACC
+generates LALR(1).
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 40
+Q23.  What is a shift-reduce conflict?
+A state in the LR table where, for the same lookahead token, the parser could either shift the
+token or reduce by a rule. It is usually caused by ambiguity. YACC resolves it using
+precedence/associativity, or by default prefers shifting.
+Example: The dangling-else problem: after if E then S seeing else, shift or reduce?
+Q24.  What is a reduce-reduce conflict?
+A state in which two or more different completed productions could be reduced for the same
+lookahead. The parser cannot tell which one to use. YACC resolves it by choosing the rule that
+appears first in the grammar file, but it is better to fix the grammar.
+Q25.  What is Syntax-Directed Translation (SDT)?
+A method of translating a program by attaching semantic rules or actions to the
+productions of a grammar. These actions run while parsing and compute values such as
+expression results, types or generated code.
+Example: expr: expr '+' expr { $$ = $1 + $3; } in YACC.
+D. Syntax-Directed Translation & Intermediate Code
+Q26.  What are synthesized attributes?
+Attributes of a parse-tree node that are computed from the attributes of its children.
+Information flows upward (bottom-up).
+Example: In E -> E1 + T, E.val = E1.val + T.val.
+Q27.  What are inherited attributes?
+Attributes of a node computed from its parent and/or left siblings. Information flows
+downward or sideways. Useful for passing context such as a declared type.
+Example: In D -> T L, L.type = T.type.
+Q28.  Define S-attributed definitions.
+An SDT that uses only synthesized attributes. It can be evaluated in one bottom-up pass, so
+it fits naturally with LR parsers and YACC (the $$ = $1 ... style).
+Q29.  Define L-attributed definitions.
+An SDT in which each inherited attribute of a symbol on the right side depends only on the
+attributes of the parent and of symbols to its left in the production. It can be evaluated in one
+left-to-right depth-first pass, so it works with top-down (LL) parsing. Every S-attributed
+definition is also L-attributed.
+Q30.  What is intermediate code representation (ICR)?
+A machine-independent form of the program produced between the front end and the back
+end. It is easier to optimize than source code and easier to translate than machine code.
+Common forms: syntax trees, postfix, three-address code. It lets one front end work with
+many back ends.
+Q31.  What is three-address code (TAC)?
+An intermediate code in which every instruction has at most three addresses: typically one
+result and two operands, with at most one operator on the right side.
+Example: a + b * c becomes t1 = b * c, t2 = a + t1.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 41
+Q32.  Compare quadruples and triples.
+A quadruple has four fields (op, arg1, arg2, result) and stores the result name explicitly, so
+instructions can be moved easily during optimization. A triple has three fields (op, arg1,
+arg2); a result is referred to by the position of the instruction, which saves space but makes
+reordering hard.
+Example: t1 = b * c as quadruple: (*, b, c, t1); as triple (0): (*, b, c).
+E. Type Checking, Symbol Tables & Run-time Memory
+Q33.  What is static type checking?
+Checking types at compile time, before the program runs, so type errors (like assigning a
+float expression to an int variable, or adding a string to a number) are reported early.
+Languages such as C and Java do this.
+Q34.  What is type coercion?
+Implicit (automatic) conversion of a value from one type to another by the compiler, usually to
+a wider type so no information is lost.
+Example: In float f = 3 + 2.5; the int 3 is automatically converted to 3.0.
+Q35.  What is a symbol table?
+A data structure used by all compiler phases to store information about identifiers: name,
+type, scope, memory offset, number/types of parameters, etc. The lexer/parser insert entries
+and later phases look them up.
+Q36.  What data structures are used for symbol tables?
+Hash table (most common: average O(1) lookup), binary search tree (O(log n), keeps
+names sorted) and linked list (simple but O(n) lookup, fine for tiny programs).
+Q37.  How are nested scopes managed in a symbol table?
+With a stack of tables (one per scope). On entering a block a new empty table is pushed; on
+leaving it is popped. A lookup searches from the innermost table outwards, so inner names
+hide (shadow) outer names. (See program 4.1.) This is lexical (static) scoping.
+Q38.  What is an activation record?
+The block of memory (stack frame) created for each procedure call. It holds the parameters,
+return address, saved registers, local variables, temporaries, and the control (dynamic) and
+access (static) links. It is pushed on call and popped on return.
+Q39.  What is a dynamic (control) link?
+A pointer stored in an activation record that points to the activation record of the caller.
+Following it lets the program return to the caller's frame.
+Q40.  What is a static (access) link?
+A pointer stored in an activation record that points to the activation record of the procedure in
+which the current procedure is lexically nested. It is used to access non-local variables in
+languages that allow nested procedures (e.g. Pascal).
+Q41.  Define heap allocation.
+Run-time allocation of memory from a large pool (the heap) for data whose lifetime does not
+follow procedure calls. It stays until freed explicitly (or by garbage collection).
+Example: malloc() in C and new in C++/Java.
+F. Optimization & Code Generation
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 42
+Q42.  What is a basic block?
+A maximal sequence of consecutive instructions with one entry (only the first instruction can
+be jumped to) and one exit (control leaves only at the last instruction). If the first instruction
+runs, all instructions in the block run.
+Q43.  What is a control flow graph (CFG)?
+A directed graph whose nodes are basic blocks and whose edges show possible flow of control
+(jumps and fall-through). It is used for optimization and loop detection. (Do not confuse with a
+context-free grammar, which has the same abbreviation.)
+Q44.  What is code optimization?
+Transforming code so it runs faster or uses less memory without changing its meaning
+(output must remain the same).
+Q45.  What is common subexpression elimination (CSE)?
+If an expression has already been computed and its operands have not changed, reuse the
+earlier result instead of recomputing.
+Example: t1 = a + b ... t3 = a + b: replace uses of t3 by t1.
+Q46.  What is dead code removal?
+Deleting instructions whose results are never used (dead code), or that can never execute
+(unreachable code). It shrinks and speeds up the program.
+Example: unused = x + 1 when 'unused' is never read.
+Q47.  What is constant folding?
+Evaluating expressions whose operands are all constants at compile time, so the work is not
+repeated at run time.
+Example: x = 3 * 7; becomes x = 21;.
+Q48.  What is constant propagation?
+Replacing a variable by its known constant value in later statements. It often creates new
+chances for constant folding.
+Example: n = 5; y = n * 2; becomes y = 5 * 2; then y = 10;.
+Q49.  What is loop-invariant code motion?
+Moving a computation whose value does not change inside the loop to just before the loop
+(the pre-header), so it is calculated once instead of every iteration.
+Example: while(i<n) x = a*b + i;: compute t = a*b before the loop.
+Q50.  What is strength reduction?
+Replacing an expensive operation with an equivalent cheaper one.
+Example: x * 2 becomes x + x or x << 1; multiplication by loop index becomes repeated addition.
+Q51.  Define peephole optimization.
+Looking at a small sliding window (the 'peephole') of target instructions and replacing it by a
+shorter or faster sequence. It removes redundant loads/stores, jumps to jumps, and useless
+instructions.
+Example: MOV R0,a then MOV a,R0 - the second instruction is redundant.
+Q52.  What is register allocation?
+Deciding which program variables and temporaries are kept in the limited CPU registers at
+each point of the program. Registers are much faster than memory, so good allocation speeds
+up the code a lot.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 43
+Q53.  What is graph coloring in register allocation?
+Variables are nodes in an interference graph; two nodes are joined if the variables are live at
+the same time. The graph is colored with K colors (K = number of registers) so that
+connected nodes get different colors. Each color becomes a register. If K colors are not
+enough, some variables are spilled to memory.
+Q54.  What is a cross compiler?
+A compiler that runs on one machine (host) but generates code for a different machine
+(target).
+Example: Compiling on a PC to produce code for an ARM microcontroller.
+Q55.  What is bootstrapping?
+Writing a compiler for a language in the same language, using a simple earlier version (often
+hand-compiled or written in another language) to compile the first full version. After that the
+compiler can compile itself.
+Example: Many C compilers are written in C.
+G. LEX / YACC Internals
+Q56.  What is the role of yyin in Lex?
+yyin is the global FILE * from which the scanner reads input. By default it is stdin; set yyin
+= fopen("file", "r"); to scan a file (see program 1.1).
+Q57.  What is yytext in Lex?
+yytext is a character pointer (char *) to the text of the lexeme that was just matched. Its
+length is in yyleng. Copy it if you need it after the next call to yylex().
+Q58.  What is yylval in YACC?
+A global variable that carries the semantic value of a token from the lexer to the parser. The
+lexer sets yylval = atoi(yytext); and returns NUMBER; in the grammar the value is read
+as $1, $2, ...
+Q59.  What does yywrap() do?
+The scanner calls yywrap() when it reaches end of input. If it returns 1, scanning stops. If it
+returns 0, the scanner continues with another input file (which you must set up). Most
+programs simply return 1 (or use %option noyywrap).
+Q60.  How are precedence rules specified in YACC?
+With %left, %right and %nonassoc in the declarations section. Operators listed on later lines
+have higher precedence; operators on the same line have equal precedence.
+Example: %left '+' '-' then %left '*' '/': * and / bind tighter than + and -.
+H. More Concepts (Parsing, Optimization, Errors, Tools)
+Q61.  What is an Abstract Syntax Tree (AST)?
+A condensed tree showing the structure of the program, with operators as internal nodes and
+operands as children. Unlike a parse tree it leaves out grammar details such as parentheses,
+semicolons and chain rules.
+Example: a + b * c: root +, children a and (* with children b, c).
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 44
+Q62.  What is backpatching?
+A technique to generate code for jumps in one pass. When a jump is generated its target is
+not yet known, so it is left blank and added to a list; later, when the target label is known, all
+jumps in that list are filled in (patched).
+Example: In an if-statement the jump past the 'then' part is patched after the 'then' code is
+generated.
+Q63.  What is a DAG representation?
+A Directed Acyclic Graph of a basic block in which each distinct expression or value appears
+once. A node with several parents is a common subexpression, so the DAG helps find CSE and
+dead code.
+Q64.  Differentiate between top-down and bottom-up parsing.
+Top-down starts at the start symbol and expands non-terminals to match the input (leftmost
+derivation) - e.g. recursive descent and LL(1). Bottom-up starts from the input tokens and
+reduces them to the start symbol (reverse rightmost derivation) - e.g. SLR, LALR, CLR.
+Bottom-up handles more grammars; top-down is simpler to write by hand.
+Q65.  What is a handle in shift-reduce parsing?
+A substring of the current right-sentential form that matches the right side of a production,
+and whose replacement by the left side is one step of the reverse rightmost derivation.
+Finding the handle tells the parser when to reduce.
+Q66.  What is a viable prefix?
+A prefix of a right-sentential form that can appear on the stack of a shift-reduce parser (it
+does not extend past the right end of the handle). As long as the stack holds a viable prefix,
+no error has been detected yet.
+Q67.  Name a feature that is not context-free.
+Checking that a variable is declared before it is used (and that types match) cannot be
+expressed in a CFG. It needs context, so it is done in semantic analysis with a symbol table.
+Q68.  What is type conversion?
+Changing a value of one type into another. Implicit conversion (coercion) is done by the
+compiler; explicit conversion (casting) is requested by the programmer.
+Example: (float) i is an explicit cast.
+Q69.  What is a symbol-table entry offset?
+The relative address of a variable within its activation record (or data area), e.g. 'x is at offset
+4'. The compiler assigns offsets using the sizes of the types, and the generated code accesses
+the variable as base + offset.
+Q70.  What is a calling sequence?
+The code executed at a procedure call: the caller evaluates and pushes arguments, saves the
+return address and jumps to the procedure; the callee then allocates its frame and saves
+registers.
+Example: PUSH y; PUSH x; CALL swap; ADD SP, 4 (program 5.3).
+Q71.  What is a return sequence?
+The code executed when a procedure ends: place the return value, restore saved registers,
+free (pop) the activation record and jump back to the saved return address.
+Q72.  What is copy propagation?
+After a copy statement x = y, later uses of x are replaced by y (while neither changes). The
+copy may then become dead code and be removed.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 45
+Q73.  What is loop unrolling?
+Repeating the loop body several times inside the loop so that fewer iterations (and fewer
+test-and-jump instructions) are needed. It makes code faster but larger.
+Example: A loop of 100 iterations can be unrolled by 4 to become 25 iterations of a body with 4
+copies.
+Q74.  What is loop fusion?
+Combining two adjacent loops that run over the same range into one loop, which reduces loop
+overhead and often improves cache use.
+Q75.  What is instruction selection?
+Choosing the target-machine instructions that implement each piece of intermediate code,
+preferring the fastest or shortest sequence. A machine may have many ways to do the same
+job.
+Example: x = x + 1 may use INC x instead of load, add, store.
+Q76.  What is instruction scheduling?
+Reordering instructions (without changing the result) to avoid pipeline stalls, for example by
+placing independent instructions between an instruction that loads a value and the one that
+uses it.
+Q77.  What is spill code?
+Extra load/store instructions that save a register's value into memory and bring it back later,
+used when there are more live variables than registers.
+Q78.  What is machine-independent optimization?
+Optimization applied to the intermediate code that does not depend on the target CPU.
+Example: Constant folding, CSE, dead-code removal, loop-invariant motion.
+Q79.  What is machine-dependent optimization?
+Optimization that uses details of the target machine such as its registers, instruction set and
+pipeline.
+Example: Register allocation, peephole optimization, instruction scheduling.
+Q80.  What is a lexical error?
+An error found by the scanner when the characters cannot form any valid token. Typical
+examples are an illegal character or a malformed number or identifier.
+Example: The character @ in C source, or the identifier 9abc.
+Q81.  What is panic mode recovery?
+An error-recovery method: after an error the parser throws away input tokens until it finds a
+synchronizing token (like ; or }) and then continues. It is simple and never loops forever,
+but may skip many tokens.
+Q82.  What is phrase-level recovery?
+After an error the parser makes a local correction on the remaining input, such as inserting
+a missing semicolon or deleting an extra comma, so that parsing can continue.
+Q83.  What is a syntax error?
+An error where the sequence of tokens does not follow the grammar. It is detected by the
+parser.
+Example: A missing semicolon or unbalanced parenthesis: x = (a + b;.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 46
+Q84.  What is a semantic error?
+An error in a program that is grammatically correct but breaks the meaning rules of the
+language, such as type or scope rules. It is detected in semantic analysis.
+Example: Using an undeclared variable, or assigning a float expression to an int variable (program
+3.3).
+Q85.  What is an intermediate code tree?
+A tree form of intermediate code in which operators are internal nodes and operands are
+leaves; the code generator walks the tree to produce target instructions. It is a
+machine-independent representation similar to an AST.
+Q86.  What is a linker?
+A tool that combines one or more object files and library routines into one executable,
+resolving references between them (for example a call to printf) and assigning final
+addresses.
+Q87.  What is a loader?
+The part of the operating system that copies an executable into main memory, sets up its
+address space and starts execution. If needed it relocates addresses.
+Q88.  What is symbol-table offsetting?
+Computing the memory offset of each variable by adding the sizes of the previously declared
+variables. The offset is stored in the symbol table.
+Example: With int=4, float=4, char=1: int a; char b; float c; have offsets 0, 4 and 5 (or 8 if
+aligned to a 4-byte boundary).
+Q89.  What is a type environment?
+A mapping from identifiers to their types that the type checker uses while checking each
+expression or statement. It is essentially the symbol table seen from the type checker's side.
+Example: {x: int, y: float, z: int} in program 3.3.
+Q90.  What is operator-precedence parsing?
+A simple bottom-up shift-reduce method for operator grammars (no ε-productions and no two
+adjacent non-terminals on a right side). It uses a table of precedence relations (less than,
+equal, greater than) between operators to decide when to shift or reduce.
+Q91.  Differentiate front end and back end.
+Front end (lexical, syntax, semantic analysis, intermediate code) depends on the source
+language. Back end (optimization and code generation) depends on the target machine.
+Separating them lets m languages and n machines be supported with m + n parts instead of
+m x n compilers.
+Q92.  What is an indirect triple?
+A listing of pointers to triples: the program is a list of pointers, each pointing to a triple in a
+separate table. To reorder instructions only the pointer list is rearranged, so the triples need
+not be changed.
+Q93.  What is a non-terminal symbol?
+A syntactic variable in a grammar. It represents a set of strings and appears on the left side of
+productions. It is expanded using productions until only terminals remain.
+Example: E, T and F in the expression grammar.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 47
+Q94.  What is a terminal symbol?
+A basic symbol (token) of the language that cannot be broken down further by the grammar.
+Terminals appear in the final strings.
+Example: +, *, (, ), id.
+Q95.  What is a start symbol?
+The special non-terminal from which every valid string of the language is derived. It is
+normally the left side of the first production.
+Example: E in the expression grammar.
+Q96.  What is a regular grammar?
+A grammar in which every production has the form A -> aB or A -> a (right-linear; the
+left-linear form is also regular). It generates exactly the regular languages (Type 3), the same
+languages that regular expressions and finite automata describe.
+Q97.  Describe the Chomsky hierarchy level for compilers.
+The hierarchy has four types: Type 0 (unrestricted), Type 1 (context-sensitive), Type 2
+(context-free) and Type 3 (regular). Scanners use Type 3 (regular expressions / finite
+automata); parsers use Type 2 (context-free grammars / pushdown automata).
+Q98.  What is run-time storage management?
+How the program's memory is organized and used while it runs. It is divided into: Code (the
+instructions), Static data (globals, constants), Stack (activation records of procedure calls)
+and Heap (dynamically allocated data).
+Q99.  What is a register interference graph (RIG)?
+A graph used in register allocation. Each node is a variable (or temporary); an edge joins two
+variables that are live at the same time and therefore cannot share a register. Coloring the
+graph assigns registers (see question 53).
+Q100.  Why is compiler design fundamental to computer science?
+Compilers connect human-friendly programming languages with the machine hardware, so
+every program we write depends on one. Compiler design combines automata theory,
+grammars, data structures, algorithms and computer architecture, and its ideas are reused in
+interpreters, text tools, query languages and many other areas.
+
+---PAGE_BREAK---
+Compiler Design Lab Manual - Study Edition
+Page 48
+Revision Notes: what was changed from the original manual
+The original PDF had all code squeezed into unbroken paragraphs. Besides re-indenting and
+explaining every program, these corrections were made so the programs work as their Aim says:
+2.3 LL(1) generator: the original typed in the FIRST and FOLLOW sets by hand. The new
+version computes them with fixed-point loops and detects conflicts.
+5.2 Optimizer: the original replaced text inside names (so t1 would also change t10) and
+always kept the last line even if it was dead. The new version works token by token and uses a
+backward liveness pass.
+2.2 YACC: removed the unnecessary %left '(' ')' line.
+Extra test cases added: parser error cases (2.1), postfix with parentheses (3.1), invalid postfix
+(3.2), an assignment that succeeds (3.3), duplicate in a scope (4.1), more declarations (4.2),
+underflow (4.3), a while loop (5.1), and multiplication in assembly (5.3).
+Viva corrections: Q1 (compilers use many phases, not ‘one pass’), Q57 (yytext is a char
+pointer), Q96 (regular grammar form), and Q43 (CFG here means control flow graph).
+LEX scanner: actions moved to their own lines so the rules fit on the page; the outputs are
+unchanged.
+Testing note: all C and Python programs were compiled and run. The LEX/YACC programs (1.1
+and 2.2) could not be run here, so their sample outputs were traced by hand; please run them
+once on your lab machine.
+
+---PAGE_BREAK---
