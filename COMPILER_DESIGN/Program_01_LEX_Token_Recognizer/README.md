@@ -1,10 +1,20 @@
 # Program 01: LEX Token Recognizer
 
 ## Compilation & Execution
-```bash
+
+From the repository root in PowerShell:
+```powershell
+Set-Location .\COMPILER_DESIGN\Program_01_LEX_Token_Recognizer
 flex scanner.l
-gcc lex.yy.c -o scanner
-./scanner
+gcc lex.yy.c -o scanner.exe
+.\scanner.exe
+```
+
+The same commands can be run from this directory:
+```powershell
+flex scanner.l
+gcc lex.yy.c -o scanner.exe
+.\scanner.exe
 ```
 
 ## Sample Input

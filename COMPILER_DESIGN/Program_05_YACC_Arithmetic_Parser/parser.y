@@ -10,7 +10,7 @@ void yyerror(const char *s);
 %left '*' '/'          /* higher precedence, left-associative */
 
 %%
-stmt : expr '\n'       { printf("Parsing Successful! Result = %d\\n", $1); exit(0); }
+stmt : expr '\n'       { printf("Parsing Successful! Result = %d\n", $1); exit(0); }
      ;
 
 expr : expr '+' expr   { $$ = $1 + $3; }
@@ -28,11 +28,11 @@ expr : expr '+' expr   { $$ = $1 + $3; }
 
 void yyerror(const char *s)
 {
-    fprintf(stderr, "Syntax Error: %s\\n", s);
+    fprintf(stderr, "Syntax Error: %s\n", s);
 }
 
 int main()
 {
-    printf("Enter Expression:\\n");
+    printf("Enter Expression:\n");
     return yyparse();
 }

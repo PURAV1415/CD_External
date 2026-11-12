@@ -1,9 +1,18 @@
 # Program 02: RE to DFA Subset Construction
 
 ## Compilation & Execution
-```bash
-gcc nfa_to_dfa.c -o nfa_to_dfa
-./nfa_to_dfa
+
+From the repository root in PowerShell:
+```powershell
+Set-Location .\COMPILER_DESIGN\Program_02_RE_to_DFA_Subset_Construction
+gcc nfa_to_dfa.c -o nfa_to_dfa.exe
+.\nfa_to_dfa.exe
+```
+
+The same commands can be run from this directory:
+```powershell
+gcc nfa_to_dfa.c -o nfa_to_dfa.exe
+.\nfa_to_dfa.exe
 ```
 
 ## Expected Output
